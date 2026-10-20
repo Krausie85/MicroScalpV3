@@ -1,0 +1,60 @@
+MICROSCALP V3 - ANLEITUNG - STAND 20.10.2026
+============================================
+WARNUNG: Dieses Programm ist ein ungepruefter, rein experimenteller Demo-Trading-Bot.
+Er verweigert Live-Konten. Backtests und Demotests sind keine Erfolgsgarantie.
+Nicht mit Echtgeld betreiben. Keinen Hebel erhoehen, um Renditen zu erzwingen.
+
+NEU GEGENUEBER V1:
+- M1 Handelssignale werden mit M5-EMA-Trend abgeglichen.
+- ATR auf M1 vermeidet zu stille und sehr volatile Maerkte.
+- Spread plus geschaetzte Roundtrip-Kommission bestimmen einen Kostenfilter.
+- Nach einem Verlust: Pause. Nach 3 Verlusten in Folge am selben UTC-Tag kein Einstieg.
+- Maximal 12 Trades pro UTC-Tag, Rekonstruktion aus V3-Handelshistorie nach Neustart.
+- Tagesverlustgrenze aus Tages-PnL-Rekonstruktion fuer dediziertes Demo-Konto.
+- Absolute Konto-Untergrenze von 180 EUR als zusaetzliche Schranke.
+- Zeitbasiertes Schliessen von V3-Positionen nach 15 Minuten.
+- Alle Trades tragen eigenes Label 'MicroScalpV3', zur klaren Auswertung.
+- Regelbasierte Filter! Dies ist KEINE selbstlernende KI.
+
+WICHTIG:
+* Fuer V3 ein ZWEITES, UNBENUTZTES IC-Markets-DEMO-Konto mit 200 EUR anlegen.
+* Auf diesem Konto KEINE anderen Bots, KEINE manuellen Trades, KEINE Ein-/Auszahlungen.
+* V1 kann auf seinem bisherigen Demo-Konto unveraendert laufen.
+* Die Verlustgrenze ist keine Garantie: Slippage, Spreads, Netzwerkunterbrechungen
+  oder Liquiditaetsluecken koennen groessere Verluste verursachen.
+* Die Tages-PnL-Rekonstruktion setzt vollstaendige cTrader-History voraus.
+  Cloud-LocalStorage persistiert nicht ueber Neustarts.
+* V3 stoppt neue Einstiege bei Tagesverlust, verfolgt aber nach UTC-Mitternacht
+  bei einer gestoppten Instanz keine neue Session automatisch - Neustart noetig.
+* Ein manuelles Stoppen der Instanz schliesst offene Positionen NICHT automatisch.
+
+GITHUB, OHNE INSTALLATION:
+1. Im bestehenden GitHub-Repository MicroScalpV1 unter Code -> Add file -> Upload files
+   die entpackten Dateien MicroScalpV3.cs, MicroScalpV3.csproj und build-v3.yml hochladen.
+2. build-v3.yml anklicken -> Stift -> Dateinamen aendern in:
+   .github/workflows/build-v3.yml
+   -> Commit changes.
+3. Actions -> Build MicroScalp V3 cTrader bot -> Run workflow (Branch main).
+4. Bei Success das Artifact 'MicroScalpV3-ctrader-algo' herunterladen.
+5. ZIP entpacken, MicroScalpV3.algo ueber cTrader-App auf dem iPhone importieren.
+6. Anschliessend am PC cTrader Web -> Algo -> MicroScalpV3 -> zweites DEMO-Konto,
+   EURUSD, M1 -> weitere Parameter kontrollieren -> erst dann starten.
+7. Instanzinformationen kontrollieren: 'START V3 DEMO', 'HEARTBEAT', 'V3 SIGNAL',
+   'V3 OPEN OK', 'V3 CLOSED'; 'ORDER REJECTED' deutet auf Broker-/Orderproblem.
+
+TESTPLAN:
+- Vor jedem Test offene Positionen/Orders pruefen.
+- V1 und V3 getrennt mit demselben Startkapital und im gleichen Zeitraum testen.
+- Keine Codeoptimierung nach 12 Trades; zuerst mindestens 100 abgeschlossene
+  V3-Trades analysieren, verschiedene Marktphasen betrachten.
+- KPI: Netto-EUR nach Kosten, Trefferquote, durchschnittlicher Gewinn/Verlust,
+  Maximaldrawdown, Anzahl Trades, Groesse der Gewinne und Verlustserien.
+- Bei negativen Ergebnissen keine Positionsgroessen erhoehen.
+
+TECHNIK:
+- cTrader.Automate 1.0.21, .NET 6.0, Build durch GitHub Windows runner.
+- V1/V2 wurden bereits so erfolgreich kompiliert; V3 ist noch NICHT kompiliert/getestet.
+- Nutzt historische Order-/Positionsdaten laut cTrader-API.
+- V3 faehrt auf eigenem Label: MicroScalpV3.
+
+Diese Datei enthaelt keine Zugangsdaten und schaltet keine Echtgeld-Funktionen frei.

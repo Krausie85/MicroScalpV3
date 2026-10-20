@@ -1,0 +1,26 @@
+name: Build MicroScalp V3 cTrader bot
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+      - name: Set up .NET 6
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '6.0.x'
+      - name: Restore
+        run: dotnet restore MicroScalpV3.csproj
+      - name: Build .algo
+        run: dotnet build MicroScalpV3.csproj -c Release --no-restore -p:AlgoPublish=false -p:IncludeSource=true
+      - name: Upload .algo
+        uses: actions/upload-artifact@v4
+        with:
+          name: MicroScalpV3-ctrader-algo
+          path: '**/MicroScalpV3.algo'
+          if-no-files-found: error
